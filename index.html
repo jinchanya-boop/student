@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบดูแลช่วยเหลือนักเรียน - โรงเรียนสา</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Noto Sans Thai', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .risk-normal {
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+        }
+        
+        .risk-warning {
+            background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+        }
+        
+        .risk-urgent {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+        
+        .sidebar-link {
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-link:hover {
+            background: rgba(102, 126, 234, 0.1);
+            border-left: 4px solid #667eea;
+        }
+        
+        .sidebar-link.active {
+            background: rgba(102, 126, 234, 0.15);
+            border-left: 4px solid #667eea;
+            font-weight: 600;
+        }
+        
+        .stat-card {
+            border-radius: 20px;
+            background: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .badge-green {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .badge-yellow {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .badge-red {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .loading.show {
+            display: flex;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 90%;
+            max-height: 90%;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Loading Spinner -->
+    <div id="loading" class="loading">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Login Page -->
+    <div id="loginPage" class="min-h-screen flex items-center justify-center gradient-bg">
+        <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-md">
+            <div class="text-center mb-8">
+                <div class="w-20 h-20 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full mx-auto mb-4 flex items-center justify-center">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                </div>
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">ระบบดูแลช่วยเหลือนักเรียน</h1>
+                <p class="text-gray-600">โรงเรียนสา</p>
+            </div>
+            
+            <div class="space-y-4">
+                <button onclick="loginWithGoogle()" class="w-full bg-white border-2 border-gray-300 text-gray-700 font-semibold py-3 px-4 rounded-xl hover:bg-gray-50 transition duration-300 flex items-center justify-center space-x-2">
+                    <svg class="w-6 h-6" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    <span>เข้าสู่ระบบด้วย Google</span>
+                </button>
+                
+                <div class="text-center text-sm text-gray-500">
+                    <p>สำหรับครู ผู้ปกครอง และนักเรียน</p>
+                    <p class="mt-2">โรงเรียนสา จังหวัดน่าน</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="mainApp" class="hidden">
+        <!-- Top Navigation -->
+        <nav class="bg-white shadow-md">
+            <div class="container mx-auto px-4">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            </svg>
+                        </div>
+                        <h1 class="text-xl font-bold text-gray-800">ระบบดูแลช่วยเหลือนักเรียน</h1>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4">
+                        <div class="text-right">
+                            <p class="text-sm font-semibold text-gray-800" id="userName">ผู้ใช้งาน</p>
+                            <p class="text-xs text-gray-500" id="userRole">บทบาท</p>
+                        </div>
+                        <button onclick="logout()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition duration-300">
+                            ออกจากระบบ
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="flex">
+            <!-- Sidebar -->
+            <aside class="w-64 bg-white min-h-screen shadow-lg">
+                <nav class="p-4">
+                    <ul class="space-y-2">
+                        <li>
+                            <a href="#" onclick="showPage('dashboard')" class="sidebar-link active flex items-center space-x-3 px-4 py-3 rounded-lg">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                                </svg>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="showPage('students')" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                                </svg>
+                                <span>ข้อมูลนักเรียน</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="showPage('profile')" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                <span>รู้จักนักเรียน</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="showPage('homevisit')" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                                </svg>
+                                <span>เยี่ยมบ้าน</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="showPage('screening')" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                                </svg>
+                                <span>คัดกรองนักเรียน</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="showPage('sdq')" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                </svg>
+                                <span>ประเมิน SDQ</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="showPage('eq')" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <span>ประเมิน EQ</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="showPage('cases')" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                </svg>
+                                <span>แผนช่วยเหลือ</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="showPage('reports')" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-lg">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                <span>รายงาน</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="flex-1 p-8">
+                <!-- Dashboard Page -->
+                <div id="dashboardPage" class="page">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-6">Dashboard ภาพรวม</h2>
+                    
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="stat-card p-6 card-hover">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500 text-sm">นักเรียนทั้งหมด</p>
+                                    <p class="text-3xl font-bold text-gray-800 mt-2" id="totalStudents">0</p>
+                                </div>
+                                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card p-6 card-hover">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500 text-sm">นักเรียนปกติ</p>
+                                    <p class="text-3xl font-bold text-green-600 mt-2" id="normalStudents">0</p>
+                                </div>
+                                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card p-6 card-hover">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500 text-sm">กลุ่มเสี่ยง</p>
+                                    <p class="text-3xl font-bold text-yellow-600 mt-2" id="riskStudents">0</p>
+                                </div>
+                                <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card p-6 card-hover">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500 text-sm">ต้องดูแลเร่งด่วน</p>
+                                    <p class="text-3xl font-bold text-red-600 mt-2" id="urgentStudents">0</p>
+                                </div>
+                                <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activities & Charts -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-white rounded-2xl shadow-lg p-6">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">นักเรียนที่ต้องติดตาม</h3>
+                            <div id="urgentList" class="space-y-3">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-2xl shadow-lg p-6">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">สถิติการคัดกรอง</h3>
+                            <canvas id="screeningChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Students Page -->
+                <div id="studentsPage" class="page hidden">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-3xl font-bold text-gray-800">ข้อมูลนักเรียน</h2>
+                        <button onclick="showAddStudentModal()" class="bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-6 py-3 rounded-xl hover:shadow-lg transition duration-300">
+                            + เพิ่มนักเรียน
+                        </button>
+                    </div>
+                    
+                    <!-- Search & Filter -->
+                    <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <input type="text" id="searchStudent" placeholder="ค้นหานักเรียน..." class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                            <select id="filterClassroom" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                <option value="">ทุกห้องเรียน</option>
+                            </select>
+                            <select id="filterRisk" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                <option value="">ทุกระดับความเสี่ยง</option>
+                                <option value="normal">ปกติ</option>
+                                <option value="risk">เสี่ยง</option>
+                                <option value="urgent">เร่งด่วน</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Students Table -->
+                    <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                        <table class="w-full">
+                            <thead class="bg-gradient-to-r from-purple-500 to-indigo-600 text-white">
+                                <tr>
+                                    <th class="px-6 py-4 text-left">รหัส</th>
+                                    <th class="px-6 py-4 text-left">ชื่อ-สกุล</th>
+                                    <th class="px-6 py-4 text-left">ชั้น/ห้อง</th>
+                                    <th class="px-6 py-4 text-left">ระดับความเสี่ยง</th>
+                                    <th class="px-6 py-4 text-left">จัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentsTable">
+                                <!-- Will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Other pages will be hidden initially -->
+                <div id="profilePage" class="page hidden">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-6">รู้จักนักเรียนเป็นรายบุคคล</h2>
+                    <div class="bg-white rounded-2xl shadow-lg p-6">
+                        <p class="text-gray-600">เนื้อหาจะพัฒนาต่อไป...</p>
+                    </div>
+                </div>
+
+                <div id="homevisitPage" class="page hidden">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-6">บันทึกการเยี่ยมบ้าน</h2>
+                    <div class="bg-white rounded-2xl shadow-lg p-6">
+                        <p class="text-gray-600">เนื้อหาจะพัฒนาต่อไป...</p>
+                    </div>
+                </div>
+
+                <div id="screeningPage" class="page hidden">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-6">คัดกรองนักเรียน</h2>
+                    <div class="bg-white rounded-2xl shadow-lg p-6">
+                        <p class="text-gray-600">เนื้อหาจะพัฒนาต่อไป...</p>
+                    </div>
+                </div>
+
+                <div id="sdqPage" class="page hidden">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-6">ประเมิน SDQ</h2>
+                    <div class="bg-white rounded-2xl shadow-lg p-6">
+                        <p class="text-gray-600">เนื้อหาจะพัฒนาต่อไป...</p>
+                    </div>
+                </div>
+
+                <div id="eqPage" class="page hidden">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-6">ประเมิน EQ</h2>
+                    <div class="bg-white rounded-2xl shadow-lg p-6">
+                        <p class="text-gray-600">เนื้อหาจะพัฒนาต่อไป...</p>
+                    </div>
+                </div>
+
+                <div id="casesPage" class="page hidden">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-6">แผนช่วยเหลือและติดตาม</h2>
+                    <div class="bg-white rounded-2xl shadow-lg p-6">
+                        <p class="text-gray-600">เนื้อหาจะพัฒนาต่อไป...</p>
+                    </div>
+                </div>
+
+                <div id="reportsPage" class="page hidden">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-6">รายงาน</h2>
+                    <div class="bg-white rounded-2xl shadow-lg p-6">
+                        <p class="text-gray-600">เนื้อหาจะพัฒนาต่อไป...</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Add Student Modal -->
+    <div id="addStudentModal" class="modal">
+        <div class="modal-content w-full max-w-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800">เพิ่มนักเรียนใหม่</h3>
+                <button onclick="closeAddStudentModal()" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <form id="addStudentForm" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">รหัสนักเรียน *</label>
+                        <input type="text" name="studentId" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">ชื่อเล่น</label>
+                        <input type="text" name="nickname" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">ชื่อ *</label>
+                        <input type="text" name="firstName" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">สกุล *</label>
+                        <input type="text" name="lastName" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">ชั้น/ห้อง *</label>
+                        <input type="text" name="classroom" required placeholder="เช่น ม.1/1" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">เพศ *</label>
+                        <select name="gender" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                            <option value="">เลือกเพศ</option>
+                            <option value="ชาย">ชาย</option>
+                            <option value="หญิง">หญิง</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">วันเกิด *</label>
+                        <input type="date" name="birthDate" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">เบอร์โทร</label>
+                        <input type="tel" name="phone" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">ที่อยู่</label>
+                    <textarea name="address" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">หมายเหตุ</label>
+                    <textarea name="behaviorNotes" rows="2" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"></textarea>
+                </div>
+                
+                <div class="flex justify-end space-x-4 mt-6">
+                    <button type="button" onclick="closeAddStudentModal()" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+                        ยกเลิก
+                    </button>
+                    <button type="submit" class="px-6 py-2 bg-gradient-to-r from-purple-500 to-indigo-600 text-white rounded-lg hover:shadow-lg">
+                        บันทึก
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentUser = null;
+        let studentsData = [];
+
+        // Initialize app
+        function init() {
+            checkAuth();
+        }
+
+        // Authentication
+        function checkAuth() {
+            // In production, this would check Google OAuth
+            // For now, we'll simulate login
+            const user = localStorage.getItem('currentUser');
+            if (user) {
+                currentUser = JSON.parse(user);
+                showMainApp();
+            } else {
+                showLoginPage();
+            }
+        }
+
+        function loginWithGoogle() {
+            // Simulate Google login
+            // In production, use google.script.run for server-side auth
+            showLoading();
+            setTimeout(() => {
+                const mockUser = {
+                    email: 'teacher@saschool.ac.th',
+                    name: 'ครูทดสอบ ระบบ',
+                    role: 'teacher',
+                    classroom: 'ม.1/1'
+                };
+                localStorage.setItem('currentUser', JSON.stringify(mockUser));
+                currentUser = mockUser;
+                hideLoading();
+                showMainApp();
+            }, 1000);
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            currentUser = null;
+            showLoginPage();
+        }
+
+        function showLoginPage() {
+            document.getElementById('loginPage').classList.remove('hidden');
+            document.getElementById('mainApp').classList.add('hidden');
+        }
+
+        function showMainApp() {
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+            document.getElementById('userName').textContent = currentUser.name;
+            document.getElementById('userRole').textContent = getRoleText(currentUser.role);
+            loadDashboard();
+        }
+
+        function getRoleText(role) {
+            const roles = {
+                'admin': 'ผู้ดูแลระบบ',
+                'teacher': 'ครู',
+                'parent': 'ผู้ปกครอง',
+                'student': 'นักเรียน'
+            };
+            return roles[role] || role;
+        }
+
+        // Page Navigation
+        function showPage(pageName) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.add('hidden');
+            });
+            
+            // Remove active class from all sidebar links
+            document.querySelectorAll('.sidebar-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.getElementById(pageName + 'Page').classList.remove('hidden');
+            
+            // Add active class to clicked link
+            event.target.closest('.sidebar-link').classList.add('active');
+            
+            // Load page data
+            if (pageName === 'dashboard') {
+                loadDashboard();
+            } else if (pageName === 'students') {
+                loadStudents();
+            }
+        }
+
+        // Dashboard Functions
+        function loadDashboard() {
+            showLoading();
+            
+            // In production, use google.script.run to fetch real data
+            // For now, use mock data
+            setTimeout(() => {
+                const stats = {
+                    total: 420,
+                    normal: 350,
+                    risk: 50,
+                    urgent: 20
+                };
+                
+                document.getElementById('totalStudents').textContent = stats.total;
+                document.getElementById('normalStudents').textContent = stats.normal;
+                document.getElementById('riskStudents').textContent = stats.risk;
+                document.getElementById('urgentStudents').textContent = stats.urgent;
+                
+                loadUrgentList();
+                hideLoading();
+            }, 500);
+        }
+
+        function loadUrgentList() {
+            const urgentStudents = [
+                { name: 'นายทดสอบ หนึ่ง', classroom: 'ม.1/1', issue: 'ขาดเรียนบ่อย', level: 'urgent' },
+                { name: 'นางสาวทดสอบ สอง', classroom: 'ม.2/3', issue: 'พฤติกรรมก้าวร้าว', level: 'urgent' },
+                { name: 'นายทดสอบ สาม', classroom: 'ม.3/2', issue: 'ผลการเรียนตกต่ำ', level: 'risk' }
+            ];
+            
+            const html = urgentStudents.map(student => `
+                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer">
+                    <div class="flex-1">
+                        <p class="font-semibold text-gray-800">${student.name}</p>
+                        <p class="text-sm text-gray-600">${student.classroom} - ${student.issue}</p>
+                    </div>
+                    <span class="badge badge-${student.level === 'urgent' ? 'red' : 'yellow'}">
+                        ${student.level === 'urgent' ? 'เร่งด่วน' : 'เสี่ยง'}
+                    </span>
+                </div>
+            `).join('');
+            
+            document.getElementById('urgentList').innerHTML = html;
+        }
+
+        // Students Functions
+        function loadStudents() {
+            showLoading();
+            
+            // Mock data - In production, fetch from Google Sheets
+            setTimeout(() => {
+                studentsData = [
+                    {
+                        studentId: 'S001',
+                        firstName: 'ทดสอบ',
+                        lastName: 'หนึ่ง',
+                        classroom: 'ม.1/1',
+                        riskLevel: 'normal'
+                    },
+                    {
+                        studentId: 'S002',
+                        firstName: 'ทดสอบ',
+                        lastName: 'สอง',
+                        classroom: 'ม.1/1',
+                        riskLevel: 'risk'
+                    },
+                    {
+                        studentId: 'S003',
+                        firstName: 'ทดสอบ',
+                        lastName: 'สาม',
+                        classroom: 'ม.2/1',
+                        riskLevel: 'urgent'
+                    }
+                ];
+                
+                renderStudentsTable(studentsData);
+                hideLoading();
+            }, 500);
+        }
+
+        function renderStudentsTable(students) {
+            const html = students.map(student => {
+                const badgeClass = student.riskLevel === 'normal' ? 'badge-green' : 
+                                  student.riskLevel === 'risk' ? 'badge-yellow' : 'badge-red';
+                const badgeText = student.riskLevel === 'normal' ? 'ปกติ' : 
+                                 student.riskLevel === 'risk' ? 'เสี่ยง' : 'เร่งด่วน';
+                
+                return `
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="px-6 py-4">${student.studentId}</td>
+                        <td class="px-6 py-4 font-semibold">${student.firstName} ${student.lastName}</td>
+                        <td class="px-6 py-4">${student.classroom}</td>
+                        <td class="px-6 py-4">
+                            <span class="badge ${badgeClass}">${badgeText}</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <button onclick="viewStudent('${student.studentId}')" class="text-blue-600 hover:text-blue-800 mr-3">ดู</button>
+                            <button onclick="editStudent('${student.studentId}')" class="text-green-600 hover:text-green-800 mr-3">แก้ไข</button>
+                            <button onclick="deleteStudent('${student.studentId}')" class="text-red-600 hover:text-red-800">ลบ</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            document.getElementById('studentsTable').innerHTML = html;
+        }
+
+        // Student CRUD
+        function showAddStudentModal() {
+            document.getElementById('addStudentModal').classList.add('show');
+        }
+
+        function closeAddStudentModal() {
+            document.getElementById('addStudentModal').classList.remove('show');
+            document.getElementById('addStudentForm').reset();
+        }
+
+        document.getElementById('addStudentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const studentData = Object.fromEntries(formData);
+            
+            showLoading();
+            
+            // In production, use google.script.run to save to Google Sheets
+            setTimeout(() => {
+                console.log('Adding student:', studentData);
+                hideLoading();
+                closeAddStudentModal();
+                loadStudents();
+                alert('เพิ่มนักเรียนสำเร็จ!');
+            }, 1000);
+        });
+
+        function viewStudent(studentId) {
+            alert('ดูข้อมูลนักเรียน: ' + studentId);
+        }
+
+        function editStudent(studentId) {
+            alert('แก้ไขนักเรียน: ' + studentId);
+        }
+
+        function deleteStudent(studentId) {
+            if (confirm('คุณแน่ใจหรือไม่ที่จะลบนักเรียนคนนี้?')) {
+                showLoading();
+                setTimeout(() => {
+                    hideLoading();
+                    loadStudents();
+                    alert('ลบนักเรียนสำเร็จ!');
+                }, 500);
+            }
+        }
+
+        // Utility Functions
+        function showLoading() {
+            document.getElementById('loading').classList.add('show');
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').classList.remove('show');
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
