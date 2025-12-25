@@ -420,132 +420,99 @@
                 </div>
 
                 <!-- Other pages will be hidden initially -->
-                <div id="profilePage" class="page hidden">
-    <div class="flex flex-col md:flex-row justify-between items-center mb-6">
+                <!-- Profile Page - รู้จักนักเรียนเป็นรายบุคคล (แทนที่ในบรรทัด 424-429) -->
+<div id="profilePage" class="page hidden">
+    <div class="flex justify-between items-center mb-6">
         <h2 class="text-3xl font-bold text-gray-800">รู้จักนักเรียนเป็นรายบุคคล</h2>
+        <button onclick="showProfileFormModal()" class="bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-6 py-3 rounded-xl hover:shadow-lg transition duration-300">
+            + เพิ่มข้อมูลนักเรียน
+        </button>
     </div>
 
+    <!-- Stats Overview -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="stat-card p-6 card-hover">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm">ทำแบบสอบถามแล้ว</p>
+                    <p class="text-3xl font-bold text-green-600 mt-2" id="completedProfiles">0</p>
+                </div>
+                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card p-6 card-hover">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm">รอดำเนินการ</p>
+                    <p class="text-3xl font-bold text-orange-600 mt-2" id="pendingProfiles">0</p>
+                </div>
+                <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                    <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card p-6 card-hover">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm">ครอบครัวยากจน</p>
+                    <p class="text-3xl font-bold text-red-600 mt-2" id="poorFamilies">0</p>
+                </div>
+                <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                    <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card p-6 card-hover">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm">ครอบครัวพิเศษ</p>
+                    <p class="text-3xl font-bold text-purple-600 mt-2" id="specialFamilies">0</p>
+                </div>
+                <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search & Filter -->
     <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
-        <label class="block text-sm font-semibold text-gray-700 mb-2">ค้นหานักเรียนเพื่อดูข้อมูล</label>
-        <div class="flex gap-4">
-            <div class="relative flex-1">
-                <input type="text" id="profileSearchInput" placeholder="พิมพ์ชื่อ หรือรหัสนักเรียน..." 
-                       class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
-                <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-            </div>
-            <button onclick="searchProfileStudent()" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition">ค้นหา</button>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <input type="text" id="searchProfile" placeholder="ค้นหานักเรียน..." class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+            <select id="filterProfileClassroom" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                <option value="">ทุกห้องเรียน</option>
+                <option value="ม.1/1">ม.1/1</option>
+                <option value="ม.2/1">ม.2/1</option>
+                <option value="ม.3/1">ม.3/1</option>
+            </select>
+            <select id="filterEconomicStatus" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                <option value="">ทุกสถานะเศรษฐกิจ</option>
+                <option value="ปกติ">ปกติ</option>
+                <option value="ยากจน">ยากจน</option>
+                <option value="ขาดแคลน">ขาดแคลน</option>
+            </select>
         </div>
-        <div id="profileSearchResults" class="mt-4 hidden space-y-2 border-t pt-4"></div>
     </div>
 
-    <div id="profileContent" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
-        <div class="lg:col-span-4 space-y-6">
-            <div class="bg-white rounded-2xl shadow-lg p-6 text-center">
-                <div class="w-32 h-32 bg-gray-200 rounded-full mx-auto mb-4 overflow-hidden border-4 border-purple-100">
-                    <svg class="w-full h-full text-gray-400" fill="currentColor" viewBox="0 0 24 24"><path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-                </div>
-                <h3 class="text-xl font-bold text-gray-800" id="profName">-</h3>
-                <p class="text-gray-500" id="profClass">-</p>
-                <div class="mt-4 flex justify-center space-x-2">
-                    <span id="profRiskBadge" class="badge badge-green">ปกติ</span>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-2xl shadow-lg p-6">
-                <h4 class="font-bold text-gray-700 mb-4 border-b pb-2">ข้อมูลเบื้องต้น</h4>
-                <div class="space-y-3 text-sm">
-                    <div class="flex justify-between">
-                        <span class="text-gray-500">รหัสนักเรียน:</span>
-                        <span class="font-medium" id="profId">-</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-500">วันเกิด:</span>
-                        <span class="font-medium" id="profDob">-</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-500">เบอร์โทร:</span>
-                        <span class="font-medium" id="profPhone">-</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="lg:col-span-8">
-            <div class="bg-white rounded-2xl shadow-lg p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xl font-bold text-gray-800">บันทึกข้อมูลรายบุคคล</h3>
-                    <button onclick="saveProfileData()" class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-2 rounded-lg hover:shadow-lg transition">
-                        บันทึกข้อมูล
-                    </button>
-                </div>
-
-                <form id="profileForm" class="space-y-6">
-                    <input type="hidden" name="studentId" id="formStudentId">
-
-                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
-                        <h4 class="font-bold text-purple-700 mb-3 flex items-center">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-                            สภาพครอบครัวและเศรษฐกิจ
-                        </h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="text-sm font-medium text-gray-700">สถานภาพบิดา-มารดา</label>
-                                <select name="familyStatus" class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-purple-500">
-                                    <option value="">เลือกสถานะ</option>
-                                    <option value="อยู่ด้วยกัน">อยู่ด้วยกัน</option>
-                                    <option value="แยกกันอยู่">แยกกันอยู่</option>
-                                    <option value="หย่าร้าง">หย่าร้าง</option>
-                                    <option value="บิดาเสียชีวิต">บิดาเสียชีวิต</option>
-                                    <option value="มารดาเสียชีวิต">มารดาเสียชีวิต</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="text-sm font-medium text-gray-700">พักอาศัยอยู่กับ</label>
-                                <input type="text" name="livingWith" class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-purple-500">
-                            </div>
-                            <div>
-                                <label class="text-sm font-medium text-gray-700">รายได้ครอบครัว (บาท/เดือน)</label>
-                                <input type="number" name="income" class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-purple-500">
-                            </div>
-                            <div>
-                                <label class="text-sm font-medium text-gray-700">จำนวนพี่น้อง (คน)</label>
-                                <input type="number" name="siblings" class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-purple-500">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
-                        <h4 class="font-bold text-blue-700 mb-3 flex items-center">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                            การเรียนและลักษณะนิสัย
-                        </h4>
-                        <div class="grid grid-cols-1 gap-4">
-                            <div>
-                                <label class="text-sm font-medium text-gray-700">อุปนิสัยส่วนตัว</label>
-                                <textarea name="personality" rows="2" class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-purple-500"></textarea>
-                            </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="text-sm font-medium text-gray-700">จุดเด่น/ความสามารถพิเศษ</label>
-                                    <textarea name="strengths" rows="2" class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-purple-500"></textarea>
-                                </div>
-                                <div>
-                                    <label class="text-sm font-medium text-gray-700">จุดที่ควรพัฒนา/จุดด้อย</label>
-                                    <textarea name="weaknesses" rows="2" class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-purple-500"></textarea>
-                                </div>
-                            </div>
-                            <div>
-                                <label class="text-sm font-medium text-gray-700">วิชาที่ชอบ/ถนัด</label>
-                                <input type="text" name="favoriteSubjects" class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-purple-500">
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
+    <!-- Profiles Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="profilesGrid">
+        <!-- Will be populated by JavaScript -->
     </div>
 </div>
+
 
                 <div id="homevisitPage" class="page hidden">
                     <h2 class="text-3xl font-bold text-gray-800 mb-6">บันทึกการเยี่ยมบ้าน</h2>
@@ -1429,7 +1396,280 @@
         }
 
         // Initialize on page load
+        หลัก) -->
+<script>
+// Profile Management
+let profilesData = [];
+
+function loadProfiles() {
+    showLoading();
+    
+    // Mock data
+    setTimeout(() => {
+        profilesData = [
+            {
+                profileId: 'PR001',
+                studentId: 'S001',
+                studentName: 'ทดสอบ หนึ่ง',
+                classroom: 'ม.1/1',
+                livingWith: 'พ่อแม่',
+                siblings: 2,
+                familyStatus: 'ปกติ',
+                income: '15,000',
+                economicStatus: 'ปกติ',
+                personality: 'เป็นคนร่าเริง ชอบคุยกับเพื่อน มีความรับผิดชอบ',
+                interests: 'ชอบเล่นฟุตบอล, อ่านการ์ตูน',
+                strengths: 'กล้าแสดงออก มีภาวะผู้นำ',
+                weaknesses: 'ขาดความตั้งใจในการเรียน',
+                gpa: 3.2,
+                favoriteSubjects: 'พลศึกษา, ศิลปะ',
+                learningStyle: 'เรียนรู้ได้ดีจากการลงมือทำ',
+                completedDate: '2024-12-20'
+            },
+            {
+                profileId: 'PR002',
+                studentId: 'S002',
+                studentName: 'ทดสอบ สอง',
+                classroom: 'ม.1/1',
+                livingWith: 'แม่',
+                siblings: 1,
+                familyStatus: 'หย่าร้าง',
+                income: '8,000',
+                economicStatus: 'ยากจน',
+                personality: 'เป็นคนเงียบ ไม่ค่อยพูดมาก',
+                interests: 'ชอบวาดรูป',
+                strengths: 'มีความคิดสร้างสรรค์ ใจเย็น',
+                weaknesses: 'ไม่กล้าแสดงความคิดเห็น',
+                gpa: 2.8,
+                favoriteSubjects: 'ศิลปะ',
+                learningStyle: 'เรียนรู้ได้ดีจากการมอง',
+                completedDate: null
+            },
+            {
+                profileId: 'PR003',
+                studentId: 'S003',
+                studentName: 'ทดสอบ สาม',
+                classroom: 'ม.2/1',
+                livingWith: 'ปู่ย่าตายาย',
+                siblings: 0,
+                familyStatus: 'พ่อหรือแม่เสียชีวิต',
+                income: '5,000',
+                economicStatus: 'ขาดแคลน',
+                personality: 'เป็นคนขยัน อดทน',
+                interests: 'ชอบอ่านหนังสือ',
+                strengths: 'มีความอดทน ทำงานหนักได้',
+                weaknesses: 'ขาดความมั่นใจ',
+                gpa: 3.5,
+                favoriteSubjects: 'คณิตศาสตร์, วิทยาศาสตร์',
+                learningStyle: 'เรียนรู้ได้ดีจากการอ่าน',
+                completedDate: '2024-12-15'
+            }
+        ];
+        
+        updateProfileStats();
+        renderProfilesGrid(profilesData);
+        hideLoading();
+    }, 500);
+}
+
+function updateProfileStats() {
+    const completed = profilesData.filter(p => p.completedDate).length;
+    const pending = profilesData.filter(p => !p.completedDate).length;
+    const poor = profilesData.filter(p => p.economicStatus === 'ยากจน' || p.economicStatus === 'ขาดแคลน').length;
+    const special = profilesData.filter(p => p.familyStatus !== 'ปกติ').length;
+    
+    document.getElementById('completedProfiles').textContent = completed;
+    document.getElementById('pendingProfiles').textContent = pending;
+    document.getElementById('poorFamilies').textContent = poor;
+    document.getElementById('specialFamilies').textContent = special;
+}
+
+function renderProfilesGrid(profiles) {
+    const html = profiles.map(profile => {
+        const statusBadge = profile.completedDate 
+            ? '<span class="px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">✓ บันทึกแล้ว</span>'
+            : '<span class="px-3 py-1 rounded-full text-xs font-semibold bg-orange-100 text-orange-800">รอดำเนินการ</span>';
+        
+        const economicColor = profile.economicStatus === 'ปกติ' ? 'text-green-600' :
+                             profile.economicStatus === 'ยากจน' ? 'text-yellow-600' : 'text-red-600';
+        
+        return `
+            <div class="bg-white rounded-2xl shadow-lg p-6 card-hover cursor-pointer" onclick="viewProfile('${profile.profileId}')">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800">${profile.studentName}</h3>
+                        <p class="text-sm text-gray-600">${profile.studentId} | ${profile.classroom}</p>
+                    </div>
+                    ${statusBadge}
+                </div>
+                
+                <div class="space-y-2 text-sm">
+                    <div class="flex items-center text-gray-700">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                        </svg>
+                        อาศัยกับ: ${profile.livingWith}
+                    </div>
+                    <div class="flex items-center text-gray-700">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span class="${economicColor} font-semibold">รายได้: ${profile.income || 'ไม่ระบุ'} บาท/เดือน</span>
+                    </div>
+                    <div class="flex items-center text-gray-700">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+                        </svg>
+                        จุดเด่น: ${profile.strengths ? profile.strengths.substring(0, 30) + '...' : 'ไม่ระบุ'}
+                    </div>
+                    ${profile.gpa ? `
+                    <div class="flex items-center text-gray-700">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                        </svg>
+                        GPA: ${profile.gpa}
+                    </div>
+                    ` : ''}
+                </div>
+                
+                ${profile.completedDate ? `
+                <div class="mt-4 pt-4 border-t border-gray-200">
+                    <p class="text-xs text-gray-500">บันทึกล่าสุด: ${new Date(profile.completedDate).toLocaleDateString('th-TH')}</p>
+                </div>
+                ` : ''}
+            </div>
+        `;
+    }).join('');
+    
+    document.getElementById('profilesGrid').innerHTML = html || '<div class="col-span-3 text-center text-gray-500 py-8">ยังไม่มีข้อมูล</div>';
+}
+
+function showProfileFormModal() {
+    document.getElementById('profileFormModal').classList.add('show');
+}
+
+function closeProfileFormModal() {
+    document.getElementById('profileFormModal').classList.remove('show');
+    document.getElementById('profileForm').reset();
+}
+
+document.getElementById('profileForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(e.target);
+    const profileData = Object.fromEntries(formData);
+    
+    showLoading();
+    
+    // In production, use google.script.run
+    setTimeout(() => {
+        console.log('Saving profile:', profileData);
+        hideLoading();
+        closeProfileFormModal();
+        loadProfiles();
+        alert('บันทึกข้อมูลนักเรียนสำเร็จ!');
+    }, 1000);
+});
+
+function viewProfile(profileId) {
+    const profile = profilesData.find(p => p.profileId === profileId);
+    if (profile) {
+        let summary = `📋 ข้อมูลนักเรียน: ${profile.studentName}\n`;
+        summary += `รหัส: ${profile.studentId} | ห้อง: ${profile.classroom}\n\n`;
+        summary += `🏠 ครอบครัว\n`;
+        summary += `- อาศัยกับ: ${profile.livingWith}\n`;
+        summary += `- จำนวนพี่น้อง: ${profile.siblings} คน\n`;
+        summary += `- สถานะครอบครัว: ${profile.familyStatus}\n\n`;
+        summary += `💰 เศรษฐกิจ\n`;
+        summary += `- รายได้: ${profile.income || 'ไม่ระบุ'} บาท/เดือน\n`;
+        summary += `- สถานะ: ${profile.economicStatus}\n\n`;
+        summary += `😊 บุคลิกภาพ\n`;
+        summary += `${profile.personality || 'ไม่ระบุ'}\n\n`;
+        summary += `⭐ จุดเด่น: ${profile.strengths || 'ไม่ระบุ'}\n`;
+        summary += `📌 ควรพัฒนา: ${profile.weaknesses || 'ไม่ระบุ'}\n\n`;
+        summary += `📚 การเรียน\n`;
+        summary += `- GPA: ${profile.gpa || 'ไม่ระบุ'}\n`;
+        summary += `- วิชาที่ชอบ: ${profile.favoriteSubjects || 'ไม่ระบุ'}\n`;
+        summary += `- ลักษณะการเรียนรู้: ${profile.learningStyle || 'ไม่ระบุ'}`;
+        
+        alert(summary);
+    }
+}
+
+// Update showPage function
+const originalShowPage = showPage;
+showPage = function(pageName) {
+    originalShowPage.call(this, pageName);
+    
+    if (pageName === 'profile') {
+        loadProfiles();
+    }
+};
+
         window.addEventListener('load', init);
     </script>
+<!-- Profile Form Modal (เพิ่มก่อน </body>) -->
+<div id="profileFormModal" class="modal">
+    <div class="modal-content w-full max-w-4xl">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-2xl font-bold text-gray-800">แบบสอบถามรู้จักนักเรียนเป็นรายบุคคล</h3>
+            <button onclick="closeProfileFormModal()" class="text-gray-500 hover:text-gray-700">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        
+        <form id="profileForm" class="space-y-6">
+            <!-- Student Selection -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">เลือกนักเรียน *</label>
+                <select name="studentId" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    <option value="">-- เลือกนักเรียน --</option>
+                    <option value="S001">S001 - ทดสอบ หนึ่ง (ม.1/1)</option>
+                    <option value="S002">S002 - ทดสอบ สอง (ม.1/1)</option>
+                    <option value="S003">S003 - ทดสอบ สาม (ม.2/1)</option>
+                </select>
+            </div>
+
+            <hr class="my-6">
+
+            <!-- Family Information -->
+            <div>
+                <h4 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                    ข้อมูลครอบครัว
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">อาศัยอยู่กับ *</label>
+                        <select name="livingWith" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                            <option value="">-- เลือก --</option>
+                            <option value="พ่อแม่">พ่อแม่</option>
+                            <option value="พ่อ">พ่อ (คนเดียว)</option>
+                            <option value="แม่">แม่ (คนเดียว)</option>
+                            <option value="ปู่ย่าตายาย">ปู่ย่า/ตายาย</option>
+                            <option value="ญาติ">ญาติคนอื่น</option>
+                            <option value="ผู้ปกครอง">ผู้ปกครองที่ไม่ใช่ญาติ</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">จำนวนพี่น้อง</label>
+                        <input type="number" name="siblings" min="0" value="0" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">สถานะครอบครัว *</label>
+                        <select name="familyStatus" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                            <option value="">-- เลือก --</option>
+                            <option value="ปกติ">ปกติ</option>
+                            <option value="แยกกันอยู่">พ่อแม่แยกกันอยู่</option>
+                            <option value="หย่าร้าง">หย่าร้าง</option>
+                            <option value="พ่อหรือแม่เสียชีวิต">พ่อหรือแม่เสียชีวิต</option>
+                            <option value="กำพร้า">กำพร้า</option>
+                        </select>
+                    </div>
+                </div>
 </body>
 </html>
