@@ -730,78 +730,113 @@
     </div>
 
     <!-- Add Student Modal -->
-    <div id="addStudentModal" class="modal">
-        <div class="modal-content w-full max-w-2xl">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold text-gray-800">เพิ่มนักเรียนใหม่</h3>
-                <button onclick="closeAddStudentModal()" class="text-gray-500 hover:text-gray-700">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </button>
+    <!-- Add Student Modal -->
+<div id="addStudentModal" class="modal">
+    <div class="modal-content w-full max-w-2xl">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-2xl font-bold text-gray-800">เพิ่มนักเรียนใหม่</h3>
+            <button onclick="closeAddStudentModal()" class="text-gray-500 hover:text-gray-700">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        
+        <form id="addStudentForm" class="space-y-4">
+            <!-- Photo Upload Section -->
+            <div class="bg-gradient-to-br from-purple-50 to-indigo-50 p-6 rounded-xl border-2 border-dashed border-purple-300">
+                <div class="flex flex-col items-center">
+                    <div class="w-32 h-32 mb-4 relative">
+                        <div id="photoPreview" class="w-full h-full bg-gray-200 rounded-full overflow-hidden border-4 border-white shadow-lg">
+                            <svg class="w-full h-full text-gray-400 p-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
+                            <img id="previewImage" src="" alt="" class="hidden w-full h-full object-cover">
+                        </div>
+                        <button type="button" onclick="document.getElementById('photoInput').click()" 
+                                class="absolute bottom-0 right-0 bg-purple-600 text-white p-2 rounded-full shadow-lg hover:bg-purple-700 transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <input type="file" id="photoInput" name="photo" accept="image/*" class="hidden" onchange="handlePhotoSelect(event)">
+                    
+                    <div class="text-center">
+                        <p class="text-sm font-semibold text-gray-700 mb-1">อัปโหลดรูปภาพนักเรียน</p>
+                        <p class="text-xs text-gray-500">รองรับ JPG, PNG (ขนาดไม่เกิน 5MB)</p>
+                    </div>
+                    
+                    <button type="button" id="removePhotoBtn" onclick="removePhoto()" 
+                            class="hidden mt-3 text-sm text-red-600 hover:text-red-800 font-medium">
+                        ลบรูปภาพ
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">รหัสนักเรียน *</label>
+                    <input type="text" name="studentId" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">ชื่อเล่น</label>
+                    <input type="text" name="nickname" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">ชื่อ *</label>
+                    <input type="text" name="firstName" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">สกุล *</label>
+                    <input type="text" name="lastName" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">ชั้น/ห้อง *</label>
+                    <input type="text" name="classroom" required placeholder="เช่น ม.1/1" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">เพศ *</label>
+                    <select name="gender" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        <option value="">เลือกเพศ</option>
+                        <option value="ชาย">ชาย</option>
+                        <option value="หญิง">หญิง</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">วันเกิด *</label>
+                    <input type="date" name="birthDate" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">เบอร์โทร</label>
+                    <input type="tel" name="phone" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                </div>
             </div>
             
-            <form id="addStudentForm" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">รหัสนักเรียน *</label>
-                        <input type="text" name="studentId" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">ชื่อเล่น</label>
-                        <input type="text" name="nickname" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">ชื่อ *</label>
-                        <input type="text" name="firstName" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">สกุล *</label>
-                        <input type="text" name="lastName" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">ชั้น/ห้อง *</label>
-                        <input type="text" name="classroom" required placeholder="เช่น ม.1/1" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">เพศ *</label>
-                        <select name="gender" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
-                            <option value="">เลือกเพศ</option>
-                            <option value="ชาย">ชาย</option>
-                            <option value="หญิง">หญิง</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">วันเกิด *</label>
-                        <input type="date" name="birthDate" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">เบอร์โทร</label>
-                        <input type="tel" name="phone" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
-                    </div>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">ที่อยู่</label>
-                    <textarea name="address" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"></textarea>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">หมายเหตุ</label>
-                    <textarea name="behaviorNotes" rows="2" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"></textarea>
-                </div>
-                
-                <div class="flex justify-end space-x-4 mt-6">
-                    <button type="button" onclick="closeAddStudentModal()" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
-                        ยกเลิก
-                    </button>
-                    <button type="submit" class="px-6 py-2 bg-gradient-to-r from-purple-500 to-indigo-600 text-white rounded-lg hover:shadow-lg">
-                        บันทึก
-                    </button>
-                </div>
-            </form>
-        </div>
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">ที่อยู่</label>
+                <textarea name="address" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"></textarea>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">หมายเหตุ</label>
+                <textarea name="behaviorNotes" rows="2" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"></textarea>
+            </div>
+            
+            <div class="flex justify-end space-x-4 mt-6">
+                <button type="button" onclick="closeAddStudentModal()" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+                    ยกเลิก
+                </button>
+                <button type="submit" class="px-6 py-2 bg-gradient-to-r from-purple-500 to-indigo-600 text-white rounded-lg hover:shadow-lg">
+                    <span id="submitBtnText">บันทึก</span>
+                    <span id="submitBtnLoading" class="hidden">กำลังบันทึก...</span>
+                </button>
+            </div>
+        </form>
     </div>
+</div>
 
     <!-- Add Activity Modal -->
     <div id="addActivityModal" class="modal">
@@ -915,6 +950,120 @@
         let currentUser = null;
         let studentsData = [];
 
+        // Global variable for storing photo
+let selectedPhotoBase64 = null;
+
+// Handle photo selection
+function handlePhotoSelect(event) {
+    const file = event.target.files[0];
+    
+    if (!file) {
+        return;
+    }
+    
+    // Validate file type
+    if (!file.type.match('image.*')) {
+        alert('กรุณาเลือกไฟล์รูปภาพเท่านั้น');
+        event.target.value = '';
+        return;
+    }
+    
+    // Validate file size (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+        alert('ขนาดไฟล์ต้องไม่เกิน 5MB');
+        event.target.value = '';
+        return;
+    }
+    
+    // Read and preview image
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+        selectedPhotoBase64 = e.target.result;
+        
+        // Show preview
+        document.getElementById('previewImage').src = selectedPhotoBase64;
+        document.getElementById('previewImage').classList.remove('hidden');
+        document.getElementById('photoPreview').querySelector('svg').classList.add('hidden');
+        document.getElementById('removePhotoBtn').classList.remove('hidden');
+    };
+    
+    reader.onerror = function() {
+        alert('เกิดข้อผิดพลาดในการอ่านไฟล์');
+        event.target.value = '';
+    };
+    
+    reader.readAsDataURL(file);
+}
+
+// Remove photo
+function removePhoto() {
+    selectedPhotoBase64 = null;
+    document.getElementById('photoInput').value = '';
+    document.getElementById('previewImage').src = '';
+    document.getElementById('previewImage').classList.add('hidden');
+    document.getElementById('photoPreview').querySelector('svg').classList.remove('hidden');
+    document.getElementById('removePhotoBtn').classList.add('hidden');
+}
+
+// Updated Add Student Form Submit Handler
+document.getElementById('addStudentForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(e.target);
+    const studentData = Object.fromEntries(formData);
+    
+    // Add photo data if available
+    if (selectedPhotoBase64) {
+        studentData.photoBase64 = selectedPhotoBase64;
+    }
+    
+    // Show loading state
+    document.getElementById('submitBtnText').classList.add('hidden');
+    document.getElementById('submitBtnLoading').classList.remove('hidden');
+    document.querySelector('#addStudentForm button[type="submit"]').disabled = true;
+    
+    showLoading();
+    
+    // Call Google Apps Script
+    google.script.run
+        .withSuccessHandler(function(result) {
+            hideLoading();
+            document.getElementById('submitBtnText').classList.remove('hidden');
+            document.getElementById('submitBtnLoading').classList.add('hidden');
+            document.querySelector('#addStudentForm button[type="submit"]').disabled = false;
+            
+            if (result.success) {
+                closeAddStudentModal();
+                loadStudents();
+                alert('เพิ่มนักเรียนสำเร็จ!');
+                
+                // Reset photo
+                removePhoto();
+            } else {
+                alert('เกิดข้อผิดพลาด: ' + result.error);
+            }
+        })
+        .withFailureHandler(function(error) {
+            hideLoading();
+            document.getElementById('submitBtnText').classList.remove('hidden');
+            document.getElementById('submitBtnLoading').classList.add('hidden');
+            document.querySelector('#addStudentForm button[type="submit"]').disabled = false;
+            
+            alert('เกิดข้อผิดพลาดในการบันทึก: ' + error.message);
+            console.error('Error:', error);
+        })
+        .addStudent(studentData);
+});
+
+// Update closeAddStudentModal function
+function closeAddStudentModal() {
+    document.getElementById('addStudentModal').classList.remove('show');
+    document.getElementById('addStudentForm').reset();
+    removePhoto(); // Reset photo when closing
+}
+
+        
         // Initialize app
         function init() {
             checkAuth();
@@ -1090,31 +1239,44 @@
         }
 
         function renderStudentsTable(students) {
-            const html = students.map(student => {
-                const badgeClass = student.riskLevel === 'normal' ? 'badge-green' : 
-                                  student.riskLevel === 'risk' ? 'badge-yellow' : 'badge-red';
-                const badgeText = student.riskLevel === 'normal' ? 'ปกติ' : 
-                                 student.riskLevel === 'risk' ? 'เสี่ยง' : 'เร่งด่วน';
-                
-                return `
-                    <tr class="border-b hover:bg-gray-50">
-                        <td class="px-6 py-4">${student.studentId}</td>
-                        <td class="px-6 py-4 font-semibold">${student.firstName} ${student.lastName}</td>
-                        <td class="px-6 py-4">${student.classroom}</td>
-                        <td class="px-6 py-4">
-                            <span class="badge ${badgeClass}">${badgeText}</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <button onclick="viewStudent('${student.studentId}')" class="text-blue-600 hover:text-blue-800 mr-3">ดู</button>
-                            <button onclick="editStudent('${student.studentId}')" class="text-green-600 hover:text-green-800 mr-3">แก้ไข</button>
-                            <button onclick="deleteStudent('${student.studentId}')" class="text-red-600 hover:text-red-800">ลบ</button>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-            
-            document.getElementById('studentsTable').innerHTML = html;
-        }
+    const html = students.map(student => {
+        const badgeClass = student.riskLevel === 'normal' ? 'badge-green' : 
+                          student.riskLevel === 'risk' ? 'badge-yellow' : 'badge-red';
+        const badgeText = student.riskLevel === 'normal' ? 'ปกติ' : 
+                         student.riskLevel === 'risk' ? 'เสี่ยง' : 'เร่งด่วน';
+        
+        const photoHtml = student.photoUrl ? 
+            `<img src="${student.photoUrl}" alt="${student.firstName}" class="w-10 h-10 rounded-full object-cover border-2 border-gray-200">` :
+            `<div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+                <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+            </div>`;
+        
+        return `
+            <tr class="border-b hover:bg-gray-50">
+                <td class="px-6 py-4">${student.studentId}</td>
+                <td class="px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        ${photoHtml}
+                        <span class="font-semibold">${student.firstName} ${student.lastName}</span>
+                    </div>
+                </td>
+                <td class="px-6 py-4">${student.classroom}</td>
+                <td class="px-6 py-4">
+                    <span class="badge ${badgeClass}">${badgeText}</span>
+                </td>
+                <td class="px-6 py-4">
+                    <button onclick="viewStudent('${student.studentId}')" class="text-blue-600 hover:text-blue-800 mr-3">ดู</button>
+                    <button onclick="editStudent('${student.studentId}')" class="text-green-600 hover:text-green-800 mr-3">แก้ไข</button>
+                    <button onclick="deleteStudent('${student.studentId}')" class="text-red-600 hover:text-red-800">ลบ</button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+    
+    document.getElementById('studentsTable').innerHTML = html;
+}
 
         // Student CRUD
         function showAddStudentModal() {
